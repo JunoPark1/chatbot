@@ -1,0 +1,6 @@
+streamlit
+langchain-community 
+openai
+streamlit-authenticator
+tiktoken
+loguru
