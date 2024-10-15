@@ -1,6 +1,8 @@
 streamlit
+langchain
 langchain-community 
 openai
 streamlit-authenticator
 tiktoken
 loguru
+PyPDF2
