@@ -4,8 +4,8 @@ from openai import OpenAI
 client = OpenAI(api_key=st.secrets["openai_api_key"])
 
 def main_chat():
-    st.title("무엇이든 물어보세요")
-    st.write("---")
+    # st.title("무엇이든 물어보세요")
+    # st.write("---")
 
     for chat in st.session_state.chat_history:
         with st.chat_message(chat["role"]):
@@ -26,7 +26,7 @@ def main_chat():
                 response = client.chat.completions.create(
                     model=st.session_state.selected_model,
                     messages=[
-                        {"role": "system", "content": "당신은 친절한 AI 어시스턴트입니다."},
+                        {"role": "system", "content": "당신은 친절한 AI 어시스턴트입니다. 답변은 아주 자세히 해주세요. 출처가 모호하거나 애매한 부분은 대답하지 않거나 다시 물어봐야 합니다. 논리적으로 대답하세요."},
                         *[
                             {"role": c["role"], "content": c["content"]}
                             for c in st.session_state.chat_history
