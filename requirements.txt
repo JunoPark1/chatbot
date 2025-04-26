@@ -1,9 +1,5 @@
 streamlit
-langchain
-langchain-community 
 openai
-streamlit-authenticator
-tiktoken
-loguru
-PyPDF2
-langchain_openai
+llama-index
+llama-hub
+pypdf
