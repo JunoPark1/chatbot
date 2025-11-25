@@ -10,12 +10,16 @@ st.set_page_config(page_title="Streamlit 챗봇 with RAG", layout="wide")
 # 세션 초기화
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
-if "index" not in st.session_state:
-    st.session_state.index = None
 if "rag_mode" not in st.session_state:
     st.session_state.rag_mode = False
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+if "previous_response_id" not in st.session_state:
+    st.session_state.previous_response_id = None
+if "uploaded_file_ids" not in st.session_state:
+    st.session_state.uploaded_file_ids = []
+if "web_search_enabled" not in st.session_state:
+    st.session_state.web_search_enabled = False
 
 # 앱 흐름
 if not st.session_state.logged_in:

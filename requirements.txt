@@ -1,5 +1,2 @@
 streamlit
 openai
-llama-index
-llama-hub
-pypdf
