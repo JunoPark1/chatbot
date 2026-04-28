@@ -10,7 +10,7 @@ def setup_rag():
 
         client = OpenAI(api_key=st.secrets["openai_api_key"])
 
-        model_options = ["gpt-5.5", "gpt-5.4", "gpt-5.4-mini"]
+        model_options = ["gpt-5.4-mini", "gpt-5.5", "gpt-5.4"]
         preset_options = ["빠른응답", "균형", "정밀"]
         preset_map = {
             "빠른응답": {"reasoning": "low", "verbosity": "low"},
@@ -28,12 +28,16 @@ def setup_rag():
             st.session_state.web_search_default_migrated = True
         if "selected_model" not in st.session_state:
             st.session_state.selected_model = "gpt-5.4-mini"
+        # 과거 기본값/세션값(예: gpt-5.5) 1회 마이그레이션
+        if "selected_model_default_migrated" not in st.session_state:
+            st.session_state.selected_model = "gpt-5.4-mini"
+            st.session_state.selected_model_default_migrated = True
         if "reasoning_by_model" not in st.session_state:
-            st.session_state.reasoning_by_model = {model_name: "medium" for model_name in model_options}
+            st.session_state.reasoning_by_model = {model_name: "low" for model_name in model_options}
         if "verbosity_by_model" not in st.session_state:
-            st.session_state.verbosity_by_model = {model_name: "medium" for model_name in model_options}
+            st.session_state.verbosity_by_model = {model_name: "low" for model_name in model_options}
         if "preset_by_model" not in st.session_state:
-            st.session_state.preset_by_model = {model_name: "균형" for model_name in model_options}
+            st.session_state.preset_by_model = {model_name: "빠른응답" for model_name in model_options}
         if "last_applied_preset_by_model" not in st.session_state:
             st.session_state.last_applied_preset_by_model = {model_name: None for model_name in model_options}
 
@@ -59,25 +63,25 @@ def setup_rag():
                 st.session_state.verbosity_by_model[model] = preset_values["verbosity"]
                 st.session_state.last_applied_preset_by_model[model] = selected_preset
 
-            effort_options = ["low", "medium", "high"]
-            current_effort = st.session_state.reasoning_by_model.get(model, "medium")
-            selected_effort = st.selectbox(
-                "Reasoning",
-                effort_options,
-                index=effort_options.index(current_effort if current_effort in effort_options else "medium"),
-                key=f"reasoning_effort_{model}",
-            )
-            st.session_state.reasoning_by_model[model] = selected_effort
+            # effort_options = ["low", "medium", "high"]
+            # current_effort = st.session_state.reasoning_by_model.get(model, "medium")
+            # selected_effort = st.selectbox(
+            #     "Reasoning",
+            #     effort_options,
+            #     index=effort_options.index(current_effort if current_effort in effort_options else "medium"),
+            #     key=f"reasoning_effort_{model}",
+            # )
+            # st.session_state.reasoning_by_model[model] = selected_effort
 
-            verbosity_options = ["low", "medium", "high"]
-            current_verbosity = st.session_state.verbosity_by_model.get(model, "medium")
-            selected_verbosity = st.selectbox(
-                "Verbosity",
-                verbosity_options,
-                index=verbosity_options.index(current_verbosity if current_verbosity in verbosity_options else "medium"),
-                key=f"verbosity_{model}",
-            )
-            st.session_state.verbosity_by_model[model] = selected_verbosity
+            # verbosity_options = ["low", "medium", "high"]
+            # current_verbosity = st.session_state.verbosity_by_model.get(model, "medium")
+            # selected_verbosity = st.selectbox(
+            #     "Verbosity",
+            #     verbosity_options,
+            #     index=verbosity_options.index(current_verbosity if current_verbosity in verbosity_options else "medium"),
+            #     key=f"verbosity_{model}",
+            # )
+            # st.session_state.verbosity_by_model[model] = selected_verbosity
 
             # Web Search 활성화 옵션
             # key를 사용하면 자동으로 st.session_state.web_search_enabled에 저장됨

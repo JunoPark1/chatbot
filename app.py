@@ -45,8 +45,8 @@ if "previous_response_id" not in st.session_state:
     st.session_state.previous_response_id = None
 if "uploaded_file_ids" not in st.session_state:
     st.session_state.uploaded_file_ids = []
-if "web_search_enabled" not in st.session_state:
-    st.session_state.web_search_enabled = True
+# 요청사항: 항상 웹 검색을 기본 활성화 상태로 유지
+st.session_state.web_search_enabled = True
 
 # 앱 흐름
 if not st.session_state.logged_in:

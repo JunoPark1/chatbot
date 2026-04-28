@@ -4,22 +4,32 @@ import tempfile
 import os
 import time
 import base64
+import html
+import re
 
 client = OpenAI(api_key=st.secrets["openai_api_key"])
 
 
 def render_message(role, content):
     bubble_class = "user-bubble" if role == "user" else "assistant-bubble"
-    st.markdown(
-        f'<div class="chat-row {bubble_class}">{content}</div>',
-        unsafe_allow_html=True
-    )
+    normalized_content = re.sub(r"\n{3,}", "\n\n", content or "")
+
+    if role == "assistant":
+        # 어시스턴트 응답은 Markdown 렌더링을 유지해 가독성을 살린다.
+        st.markdown(normalized_content)
+    else:
+        safe_content = html.escape(normalized_content).replace("\n", "<br>")
+        st.markdown(
+            f'<div class="chat-row {bubble_class}">{safe_content}</div>',
+            unsafe_allow_html=True
+        )
 
 
 def render_generated_image(role, image_data_url, caption="생성된 이미지"):
     bubble_class = "user-bubble" if role == "user" else "assistant-bubble"
+    safe_caption = html.escape(caption or "")
     st.markdown(
-        f'<div class="chat-row {bubble_class}">{caption}</div>',
+        f'<div class="chat-row {bubble_class}">{safe_caption}</div>',
         unsafe_allow_html=True
     )
     st.image(image_data_url, use_container_width=True)
@@ -292,21 +302,18 @@ def main_chat():
         if st.button("⏹️ 답변 중지", use_container_width=True):
             st.session_state.stop_requested = True
 
-    # 입력창 바로 위에서 이미지 생성 모드 토글
-    icon_col, mode_text_col = st.columns([0.14, 0.86])
-    with icon_col:
-        icon_label = "✅ 🖼️" if st.session_state.image_mode_enabled else "🖼️"
-        if st.button(icon_label, key="toggle_image_mode", help="이미지 생성 모드 전환"):
-            st.session_state.image_mode_enabled = not st.session_state.image_mode_enabled
-            st.rerun()
-    with mode_text_col:
-        st.caption(
-            "이미지 생성 모드 (`gpt-image-1`)"
-            if st.session_state.image_mode_enabled
-            else "텍스트 대화 모드"
-        )
-
     try:
+        # 입력창 바로 위에서 이미지 생성 모드 토글
+        icon_col, mode_text_col = st.columns([0.10, 0.90], vertical_alignment="center")
+        with icon_col:
+            icon_label = "✅ 🖼️" if st.session_state.image_mode_enabled else "🖼️"
+            if st.button(icon_label, key="toggle_image_mode", help="이미지 생성 모드 전환"):
+                st.session_state.image_mode_enabled = not st.session_state.image_mode_enabled
+                st.rerun()
+        with mode_text_col:
+            if st.session_state.image_mode_enabled:
+                st.caption("이미지 생성 (`gpt-image-1`)")
+
         user_input_payload = st.chat_input(
             "메시지를 입력하세요...",
             accept_file="multiple",
